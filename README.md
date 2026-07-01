@@ -66,6 +66,17 @@ pip3 install .
 
 **What this does:** It tells Python to install the `doctopdf` package (the `.` means "the current folder"). The tool is now available as the `convert-word-pdf` command.
 
+> **⚠️ You might see a warning like this:**
+> ```
+> WARNING: The script convert-word-pdf is installed in
+> '/Users/yourname/Library/Python/3.9/bin' which is not on PATH.
+> ```
+> This is normal on macOS — Python's install folder isn't on your
+> system's PATH by default. If you see this, the tool **is installed**
+> but the terminal can't find the `convert-word-pdf` command yet.
+> Skip to the **Troubleshooting** section below for how to fix this
+> in one minute. Or use **Option B** (run without installing) instead.
+
 #### Step 4: Verify it worked
 
 ```bash
@@ -434,6 +445,117 @@ python -m doctopdf -i ./test_docs -o ./test_pdfs
 
 ### Structured log (--log-file)
 Use `--log-file results.json` or `--log-file results.csv` for post-hoc analysis.
+
+## Troubleshooting
+
+### "convert-word-pdf: command not found" after installation
+
+This is the most common issue on macOS. Here is what happened and how to fix it.
+
+**Why this happens:** When you run `pip3 install .`, Python installs the
+`convert-word-pdf` command into a folder like:
+
+```
+/Users/yourname/Library/Python/3.9/bin
+```
+
+That folder is a standard install location used by Python's `pip` on macOS.
+However, macOS does not include this folder in your terminal's search path
+(the technical term is `PATH`) by default. So even though the tool is
+installed, your terminal doesn't know where to find it.
+
+**How to fix it (two ways):**
+
+#### Fix A: Add the folder to your PATH (do this once)
+
+1. Find out which Python version you have:
+
+   ```bash
+   python3 --version
+   ```
+
+   This will show something like `Python 3.9.x`. Note the **major.minor**
+   version number (e.g. `3.9`).
+
+2. Open your shell configuration file:
+
+   - If you use **zsh** (default on macOS Catalina and newer):
+
+     ```bash
+     nano ~/.zshrc
+     ```
+
+   - If you use **bash** (older macOS versions):
+
+     ```bash
+     nano ~/.bash_profile
+     ```
+
+3. Add this line at the bottom of the file (replace `3.9` with the Python
+   version you saw in step 1):
+
+   ```bash
+   export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+   ```
+
+   **What this does:** It tells your terminal to look in the Python bin
+   folder whenever you type a command, so it can find `convert-word-pdf`.
+
+4. Save the file:
+   - Press **Ctrl + O** → **Enter** to save
+   - Press **Ctrl + X** to exit nano
+
+5. Reload your configuration:
+
+   ```bash
+   source ~/.zshrc
+   ```
+
+   (If you used `~/.bash_profile` instead, run `source ~/.bash_profile`.)
+
+6. Verify it worked:
+
+   ```bash
+   convert-word-pdf --version
+   ```
+
+   You should see `convert-word-pdf 1.0.0` instead of "command not found."
+
+#### Fix B: Skip PATH entirely — use Option B instead
+
+If you don't want to edit configuration files, don't install the tool at
+all. Run it directly from the project folder instead:
+
+```bash
+cd ~/Documents/doctopdf
+python3 -m doctopdf --check
+```
+
+See **Option B** in the Installation section above for full instructions.
+The tool works identically either way — you just type a slightly longer
+command.
+
+### Check which Python is active
+
+If you have multiple Python versions installed, `pip3 install` and
+`python3 -m doctopdf` might use different Python installations, causing
+confusion. Verify they match:
+
+```bash
+pip3 --version
+python3 --version
+```
+
+Both should reference the same Python version (e.g. `Python 3.9.x`).
+If they don't, use the full path to your desired Python, for example:
+
+```bash
+/usr/local/bin/python3 -m doctopdf --check
+```
+
+### Permission errors with osascript (-1743)
+
+See the **macOS Permissions** section earlier in this document.
 
 ## License
 
