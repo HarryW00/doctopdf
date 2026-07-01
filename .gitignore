@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# macOS
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.venv
+venv/
+
+# Project-specific
+test_output/
+
+# IDE
+.vscode/
+.idea/
