@@ -11,40 +11,136 @@ Input (.doc/.docx)  ──→  Microsoft Word (JXA automation)  ──→  Outpu
 
 The tool uses AppleScript/JXA (JavaScript for Automation) to tell Microsoft Word to open each document and export it as PDF. This guarantees **maximum formatting fidelity** — the PDF looks exactly as it would if you manually opened the file in Word and chose File → Export as PDF.
 
-## Requirements
+## Requirements (what you need before starting)
 
-- **macOS** 11 (Big Sur) or later
-- **Python** 3.9 or later (no extra pip packages needed)
-- **Microsoft Word** for macOS (Office 2019, Microsoft 365, or later)
-- **Automation permission**: Terminal → Microsoft Word (first run prompts automatically)
+Before you can use this tool, make sure you have everything listed below:
 
-## Installation
+| Requirement | Why you need it | How to check you have it |
+|---|---|---|
+| **macOS 11 (Big Sur) or newer** | Only runs on Mac | Click the Apple menu  → About This Mac → look at macOS version |
+| **Python 3.9 or later** | The tool is written in Python | Open Terminal and type `python3 --version`. You should see `Python 3.9.x` or higher. If you don't have Python, see the note below. |
+| **Microsoft Word for Mac** | This is the engine that actually converts the files to PDF. You need Word 2019, Microsoft 365, or any newer version. | Open Word and go to Word menu → About Microsoft Word |
+| **Automation permission** | macOS needs your permission before this tool can talk to Word. You'll be prompted on first use. | You don't need to check this in advance — see the Permissions section below. |
 
-### 1. Install via pip
+> **No Python?** macOS usually comes with Python 3 pre-installed. If `python3 --version` gives an error, install Python from [python.org](https://www.python.org/downloads/). Download the macOS installer, run it, and follow the steps.
+
+## Installation (step by step)
+
+There are **two ways** to use this tool. Choose whichever is easier for you:
+
+- **Option A** (recommended): Install it once, then run `convert-word-pdf` anywhere
+- **Option B** (no install): Run it directly from the project folder using `python3 -m doctopdf`
+
+Both options do the same thing. Option A is more convenient for repeated use.
+
+---
+
+### Option A: Install the tool (recommended)
+
+This installs a command called `convert-word-pdf` that you can use from any folder on your Mac.
+
+#### Step 1: Open Terminal
+
+- Press **Cmd + Space** to open Spotlight Search
+- Type **"Terminal"** and press Enter
+
+#### Step 2: Navigate to the project folder
+
+You need to be inside the `doctopdf` folder (the one containing this README file). Type this in Terminal:
 
 ```bash
-pip install .
+cd ~/Documents/doctopdf
 ```
 
-This installs the `convert-word-pdf` command globally.
+If you saved the project somewhere else, use that path instead. For example:
+- Desktop: `cd ~/Desktop/doctopdf`
+- Downloads: `cd ~/Downloads/doctopdf`
 
-### 2. Or run directly (no install)
+#### Step 3: Install the package
+
+Run this command:
 
 ```bash
-python -m doctopdf --input ./docs --output ./pdfs
+pip3 install .
 ```
 
-### 3. Verify Word is detected
+**What this does:** It tells Python to install the `doctopdf` package (the `.` means "the current folder"). The tool is now available as the `convert-word-pdf` command.
+
+#### Step 4: Verify it worked
 
 ```bash
 convert-word-pdf --check
 ```
 
-Expected output:
+You should see:
 ```
 ✓ Microsoft Word is installed (version: 16.72)
   The automation bridge is operational.
 ```
+
+If instead you see an error, skip down to the **Troubleshooting** section.
+
+---
+
+### Option B: Run directly (no installation)
+
+If you don't want to install anything, you can run the tool directly from the project folder.
+
+#### Step 1: Open Terminal
+
+- Press **Cmd + Space** → type **"Terminal"** → Enter
+
+#### Step 2: Navigate to the project folder
+
+```bash
+cd ~/Documents/doctopdf
+```
+
+(Change the path if you saved the project elsewhere.)
+
+#### Step 3: Run the tool
+
+Instead of `convert-word-pdf`, you'll use:
+
+```bash
+python3 -m doctopdf --check
+```
+
+This tells Python to run the `doctopdf` package (`.m doctopdf`) from the current folder. Use this same pattern whenever you see `convert-word-pdf` in the examples below:
+
+| Instead of this | Use this |
+|---|---|
+| `convert-word-pdf --check` | `python3 -m doctopdf --check` |
+| `convert-word-pdf -i ./docs -o ./pdfs` | `python3 -m doctopdf -i ./docs -o ./pdfs` |
+| `convert-word-pdf --version` | `python3 -m doctopdf --version` |
+
+---
+
+### Step for both options: Verify Word is detected
+
+After installing (or if running directly), run the check command to make sure everything is set up correctly:
+
+```bash
+# If you did Option A (installed)
+convert-word-pdf --check
+
+# If you did Option B (no install, run from project folder)
+python3 -m doctopdf --check
+```
+
+**Expected output:**
+```
+✓ Microsoft Word is installed (version: 16.72)
+  The automation bridge is operational.
+```
+
+**If you see "Word is NOT installed":**
+1. Make sure Microsoft Word is actually installed (open it from Applications)
+2. If Word opens but the check still fails, close Word completely (Word menu → Quit Microsoft Word) and try again
+3. If you just installed Word, restart your Mac and try again
+
+**If you see a permission error (-1743):**
+This means macOS hasn't granted Automation permission yet. Run the command a second time — macOS should show a permission dialog. Click **Allow**. See the **macOS Permissions** section below if this doesn't happen.
 
 ## Quick Start
 
