@@ -44,6 +44,8 @@ This installs a command called `convert-word-pdf` that you can use from any fold
 - Press **Cmd + Space** to open Spotlight Search
 - Type **"Terminal"** and press Enter
 
+> **💡 Tip:** You can also **Option + Right-Click** a folder in Finder and select **Services → Open in Terminal** (or **New Terminal at Folder**). This opens Terminal already `cd`'d to that location — no need to type a path.
+
 #### Step 2: Navigate to the project folder
 
 You need to be inside the `doctopdf` folder (the one containing this README file). Type this in Terminal:
@@ -101,6 +103,8 @@ If you don't want to install anything, you can run the tool directly from the pr
 
 - Press **Cmd + Space** → type **"Terminal"** → Enter
 
+> **💡 Tip:** Option + Right-Click a folder in Finder and pick **Open in Terminal** to skip typing the `cd` path entirely.
+
 #### Step 2: Navigate to the project folder
 
 ```bash
@@ -152,6 +156,18 @@ python3 -m doctopdf --check
 
 **If you see a permission error (-1743):**
 This means macOS hasn't granted Automation permission yet. Run the command a second time — macOS should show a permission dialog. Click **Allow**. See the **macOS Permissions** section below if this doesn't happen.
+
+> **⚠️ Data Safety — Important**
+>
+> DocToPDF is a **batch automation tool**. If you accidentally point it at the wrong folder or a file gets corrupted during conversion, documents could be lost or damaged.
+>
+> **Before running your first conversion:**
+> 1. **Back up your documents** — copy your `.doc` / `.docx` files to a separate backup folder, or ensure you have Time Machine or cloud backup running
+> 2. **Use a dedicated input folder** — copy the files you want to convert into a new folder rather than pointing the tool at your master document directory
+> 3. **Try a dry run first** — add `--dry-run` to see which files will be processed before any conversion happens:
+>    ```bash
+>    convert-word-pdf -i ./docs -o ./pdfs --dry-run
+>    ```
 
 ## Quick Start
 
@@ -262,6 +278,16 @@ Click **Allow**. If you accidentally deny, fix it:
 ### File Access
 
 The tool needs read access to the input directory and write access to the output directory. Standard macOS file permissions apply. For directories under `~/Documents`, your terminal app typically already has access.
+
+When Microsoft Word opens a document from a folder it hasn't accessed before, macOS may show a **"Grant File Access"** dialog:
+
+<!-- TODO: Add screenshot — see docs/images/file-access-dialog.png -->
+```
+Microsoft Word wants to access files in your "Downloads" folder.
+[Deny] [Allow]
+```
+
+Click **Allow** so Word can read the source document and write the PDF. If you click Deny by accident, the conversion will fail with a file-access error — just re-run the tool and macOS will prompt again.
 
 ### No Network/Accessibility Permissions
 
