@@ -1,10 +1,14 @@
 # DocToPDF — Offline macOS Batch Document Converter
 
+<div align="center">
+  
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9+-blue?logo=python&logoColor=white)
 ![Platform: macOS](https://img.shields.io/badge/Platform-macOS-lightgrey?logo=apple&logoColor=black)
 ![Automation: AppleScript](https://img.shields.io/badge/Automation-AppleScript%20%2F%20JXA-purple)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Version: 1.1.0](https://img.shields.io/badge/version-1.1.0-brightgreen)
+
+</div>
 
 **Convert .doc and .docx files to PDF using Microsoft Word as the rendering engine.**  
 Runs entirely offline with zero cloud dependencies.
