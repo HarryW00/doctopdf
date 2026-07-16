@@ -22,3 +22,6 @@ test_output/
 # IDE
 .vscode/
 .idea/
+
+# Tooling (local code-intelligence index)
+.codegraph/
