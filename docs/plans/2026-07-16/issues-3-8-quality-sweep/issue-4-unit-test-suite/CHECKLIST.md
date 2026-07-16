@@ -20,6 +20,7 @@
 | CL-06 | `resolve_collision` → `_1`, `_2`, …; never returns existing | Req 2 | `test_resolve_collision_suffixes` | `[pending]` |
 | CL-07 | Each exception carries correct message + `input_path` | Req 3 | `test_exception_messages_and_paths` (parametrized) | `[pending]` |
 | CL-08 | Hierarchy: `CorruptDocumentError`→`DocumentOpenError`→`DocToPDFError`→`Exception` | Req 3 | `test_exception_hierarchy` | `[pending]` |
+| CL-08a | `CorruptDocumentError(path, detail)` constructs without error and stores `input_path` (issue #9 fix) | Req 3 / #9 | `test_corrupt_document_error_constructs` | `[pending]` |
 | CL-09 | `convert` success returns expected dict; missing `attempts` defaults to 1 | Req 4/Edge | `test_convert_success` | `[pending]` |
 | CL-10 | `convert` classifies: `-1743`→`WordPermissionError`; crash→`WordCrashError`; timeout→`ConversionTimeoutError`; `corrupt`→`CorruptDocumentError` | Req 4 | `test_convert_error_classification` (parametrized via mocked stdout/stderr) | `[pending]` |
 | CL-11 | `convert_with_retry` does NOT retry terminal errors (`Corrupt`, `WordPermission`, `DocumentOpen`, `FileAccess`) | Req 4 | `test_no_retry_terminal_errors` (assert run-count == 1) | `[pending]` |

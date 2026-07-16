@@ -110,7 +110,11 @@ Detailed mocking patterns in `references/pytest-mocking.md`.
 
 ## 8. Design-Time Refactoring
 
-**None.** Tests are additive; no production code changed by #4. (Pre-existing lint cleanup belongs to #7.)
+| Finding | Affected Module | Tier | Disposition | Test Evidence |
+|---|---|---|---|---|
+| `CorruptDocumentError(...)` crashes at construction with `AttributeError` (issue #9) | `doctopdf/errors.py` | T1 | **Refactored** (this change) — call `DocToPDFError.__init__(self, msg, input_path)` instead of `super().__init__(msg)` | `tests/test_errors.py` constructs it and asserts `input_path` |
+
+All other production code is unchanged by #4; pre-existing lint/type cleanup belongs to #7.
 
 ---
 

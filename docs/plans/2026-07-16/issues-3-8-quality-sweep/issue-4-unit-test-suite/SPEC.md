@@ -13,7 +13,8 @@ Establish the project's first automated test suite so regressions in file discov
 
 ### In Scope
 
-- Add a `dev` optional-dependency group to `pyproject.toml` containing `pytest`, `pytest-cov`, `ruff`, `mypy`.
+- **Extend** the `dev` optional-dependency group (bootstrapped with `pytest` by #6) to add `pytest-cov`, `ruff`, `mypy`.
+- **Fix the `CorruptDocumentError` construction bug (issue #9)** so the class is instantiable and stores `input_path` — a one-line change in `errors.py`. #4 closes #9. *(Discovered while planning this spec's error tests.)*
 - `tests/test_scanner.py` — discovery, filtering, output-path mapping, and collision resolution.
 - `tests/test_errors.py` — exception messages and the full class hierarchy.
 - `tests/test_converter.py` — `subprocess.run` mocked to exercise the conversion result-classification and retry policy without real Word.
@@ -92,6 +93,6 @@ Establish the project's first automated test suite so regressions in file discov
   - `doctopdf/errors.py` — full hierarchy (`DocToPDFError:12` … `WordCrashError:93`)
   - `doctopdf/converter.py` — `convert:133`, `convert_with_retry:270` (terminal tuple at 292–297, linear backoff at 314)
   - `doctopdf/config.py` — `SUPPORTED_EXTENSIONS:11` (`{'.doc', '.docx'}`), `MIN_FILE_SIZE_BYTES:14` (`1`)
-  - `pyproject.toml` — `[project.optional-dependencies]` absent today (to add `dev` group)
+  - `pyproject.toml` — `[project.optional-dependencies] dev` bootstrapped by #6 (`pytest`); extended by #4 (`pytest-cov`, `ruff`, `mypy`)
 - Related project context files:
   - `docs/plans/2026-07-16/issues-3-8-quality-sweep/PROPOSAL.md`
