@@ -224,7 +224,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
     )
 
     try:
-        results = orchestrator.run()
+        orchestrator.run()
     except KeyboardInterrupt:
         print('\n\nCancelled by user.')
         return 130

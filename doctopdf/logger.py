@@ -12,7 +12,7 @@ import csv
 import json
 import sys
 import time
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Optional, TextIO
 
@@ -117,7 +117,7 @@ class ConversionLogger:
         if self._errors:
             print(f'\n  Failed files ({len(self._errors)}):', file=self._out)
             for rec in self._errors[:10]:  # Show first 10 errors
-                print(f'    ✗ {Path(rec.input_path).name}: {rec.error[:80]}', file=self._out)
+                print(f'    ✗ {Path(rec.input_path).name}: {(rec.error or "")[:80]}', file=self._out)
             if len(self._errors) > 10:
                 print(f'    ... and {len(self._errors) - 10} more (see --log-file for full list)', file=self._out)
 

@@ -22,13 +22,12 @@ import os
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, Tuple
 
 _logger = logging.getLogger(__name__)
 
 from .config import APPLESCRIPT_EXPORT_SCRIPT, APPLESCRIPT_CHECK_WORD
 from .errors import (
-    WordNotInstalledError,
     WordPermissionError,
     DocumentOpenError,
     CorruptDocumentError,

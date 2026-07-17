@@ -7,6 +7,7 @@
 ![Automation: AppleScript](https://img.shields.io/badge/Automation-AppleScript%20%2F%20JXA-purple)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Version: 1.1.0](https://img.shields.io/badge/version-1.1.0-brightgreen)
+![CI](https://github.com/HarryW00/doctopdf/actions/workflows/lint.yml/badge.svg)
 
 </div>
 
