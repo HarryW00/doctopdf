@@ -29,7 +29,7 @@ keywords = ["docx", "doc", "pdf", "converter", "microsoft-word", "macos"]
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "pytest-cov", "ruff", "mypy"]
 
 [project.scripts]
 convert-word-pdf = "doctopdf.cli:main"
