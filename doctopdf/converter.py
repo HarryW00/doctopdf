@@ -24,8 +24,6 @@ import time
 from pathlib import Path
 from typing import Dict, Tuple
 
-_logger = logging.getLogger(__name__)
-
 from .config import APPLESCRIPT_EXPORT_SCRIPT, APPLESCRIPT_CHECK_WORD
 from .errors import (
     WordPermissionError,
@@ -38,6 +36,7 @@ from .errors import (
 )
 
 
+_logger = logging.getLogger(__name__)
 _log = logging.getLogger(__name__)
 
 
