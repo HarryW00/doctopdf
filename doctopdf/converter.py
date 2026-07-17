@@ -17,11 +17,14 @@ Typical usage:
 """
 
 import json
+import logging
 import os
 import subprocess
 import time
 from pathlib import Path
 from typing import Dict, Optional, Tuple
+
+_logger = logging.getLogger(__name__)
 
 from .config import APPLESCRIPT_EXPORT_SCRIPT, APPLESCRIPT_CHECK_WORD
 from .errors import (
@@ -354,7 +357,9 @@ end try
                 timeout=10,
             )
         except Exception:
-            pass  # Best-effort
+            _logger.warning(
+                "Word cleanup failed (non-fatal)", exc_info=True
+            )
 
     @staticmethod
     def quit_word() -> None:
@@ -380,7 +385,9 @@ end try
                 timeout=10,
             )
         except Exception:
-            pass
+            _logger.warning(
+                "Word graceful quit failed (non-fatal)", exc_info=True
+            )
 
         # Verify Word actually exited; force if necessary
         WordConverter._force_quit_word()
@@ -395,7 +402,9 @@ end try
                 timeout=5,
             )
         except Exception:
-            pass
+            _logger.warning(
+                "Force-quit Word failed (non-fatal)", exc_info=True
+            )
 
     @staticmethod
     def restart_word() -> None:
@@ -442,4 +451,7 @@ end try
             result = subprocess.run(check, capture_output=True, text=True, timeout=5)
             return result.stdout.strip() == 'true'
         except Exception:
+            _logger.warning(
+                "Word process check failed (non-fatal)", exc_info=True
+            )
             return False
