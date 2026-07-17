@@ -39,6 +39,9 @@ from .errors import (
 )
 
 
+_log = logging.getLogger(__name__)
+
+
 class WordConverter:
     """Manages the Microsoft Word automation bridge for a single conversion."""
 
@@ -438,6 +441,10 @@ end try
             time.sleep(1)
 
         # If Word didn't launch, next conversion will fail with a clear error
+        _log.warning(
+            "Microsoft Word did not relaunch within 30s after restart. "
+            "Next conversion may fail."
+        )
 
     @staticmethod
     def _is_word_running() -> bool:

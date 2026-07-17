@@ -28,6 +28,9 @@ classifiers = [
 keywords = ["docx", "doc", "pdf", "converter", "microsoft-word", "macos"]
 requires-python = ">=3.9"
 
+[project.optional-dependencies]
+dev = ["pytest"]
+
 [project.scripts]
 convert-word-pdf = "doctopdf.cli:main"
 

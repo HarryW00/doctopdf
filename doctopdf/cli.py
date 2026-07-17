@@ -14,6 +14,7 @@ Usage:
 """
 
 import argparse
+import logging
 import sys
 from pathlib import Path
 from typing import List, Optional
@@ -127,6 +128,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     # ── Utility ─────────────────────────────────────────────────
     parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help='Enable verbose debug logging (shows internal Word cleanup/restart diagnostics)',
+    )
+    parser.add_argument(
         '--check',
         action='store_true',
         help='Check if Microsoft Word is installed and scriptable, then exit',
@@ -139,6 +145,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     return parser
+
+
+def _configure_logging(verbose: bool) -> None:
+    """Configure stdlib logging: warnings visible by default, debug with --verbose."""
+    logging.basicConfig(
+        level=logging.DEBUG if verbose else logging.WARNING,
+        format='%(levelname)s %(name)s: %(message)s',
+        stream=sys.stderr,
+    )
 
 
 def cmd_check() -> int:
@@ -240,6 +255,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     """
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    # Configure stdlib logging before any work; warnings show by default,
+    # debug diagnostics require --verbose.
+    _configure_logging(args.verbose)
 
     # ── Mode dispatch ──────────────────────────────────────────
     if args.check:
