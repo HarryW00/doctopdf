@@ -1,5 +1,5 @@
 """
-Converter module — Microsoft Word automation bridge.
+Converter module 	6 Microsoft Word automation bridge.
 
 Provides the WordConverter class which uses AppleScript (via osascript)
 to open a document in Microsoft Word and export it as PDF.
@@ -43,24 +43,24 @@ _log = logging.getLogger(__name__)
 class WordConverter:
     """Manages the Microsoft Word automation bridge for a single conversion."""
 
-    # ═══════════════════════════════════════════════════════════════
+    # 
     # BRIDGE SELECTION
-    # ═══════════════════════════════════════════════════════════════
+    # 
     #
     # Microsoft Word on macOS is automated via AppleScript (the
     # osascript CLI). Two script engines are available:
     #
-    #   1. AppleScript (.applescript) — PRIMARY.
-    #      Battle-tested, works reliably across Word 2016 → 365.
+    #   1. AppleScript (.applescript) 	6 PRIMARY.
+    #      Battle-tested, works reliably across Word 2016  365.
     #      Uses `save as ... file format format PDF`.
     #
-    #   2. JXA/JavaScript (.js) — FALLBACK.
+    #   2. JXA/JavaScript (.js) 	6 FALLBACK.
     #      Available but has known issues with Word's `open` method
     #      returning null on some versions.
     #
     # The AppleScript bridge is the default. JXA can be enabled by
     # setting bridge='jxa' for testing or fallback scenarios.
-    # ═══════════════════════════════════════════════════════════════
+    # 
 
     def __init__(
         self,
@@ -96,7 +96,7 @@ class WordConverter:
             return ['osascript', '-l', 'JavaScript', str(self._script_path)]
         return ['osascript', str(self._script_path)]
 
-    # ── Installation check ─────────────────────────────────────
+    #  Installation check 
 
     @staticmethod
     def check_word_installed() -> Tuple[bool, str]:
@@ -132,7 +132,7 @@ class WordConverter:
         except Exception as e:
             return False, str(e)
 
-    # ── Single conversion ───────────────────────────────────────
+    #  Single conversion 
 
     def convert(self, input_path: Path, output_path: Path) -> Dict:
         """
@@ -163,7 +163,7 @@ class WordConverter:
         abs_input = str(input_path.resolve())
         abs_output = str(output_path.resolve())
 
-        # ── Quick sanity checks before invoking Word ────────────
+        #  Quick sanity checks before invoking Word 
         if not input_path.exists():
             raise FileAccessError(input_path, 'File does not exist')
 
@@ -176,7 +176,7 @@ class WordConverter:
         elif not os.access(str(output_dir), os.W_OK):
             raise FileAccessError(output_dir, 'Output directory not writable')
 
-        # ── Build osascript command ─────────────────────────────
+        #  Build osascript command 
         cmd = self._script_args + [abs_input, abs_output, str(self.timeout)]
 
         start_time = time.monotonic()
@@ -194,14 +194,14 @@ class WordConverter:
 
         duration = round(time.monotonic() - start_time, 2)
 
-        # ── Handle osascript failures ───────────────────────────
+        #  Handle osascript failures 
         if proc_result.returncode != 0:
             stderr = (proc_result.stderr or '').strip()
 
             # Detect permission error (-1743 = AppleScript permission denied)
             if '-1743' in stderr or 'not allowed' in stderr.lower() \
                or 'permission' in stderr.lower():
-                raise WordPermissionError()
+                 raise WordPermissionError()
 
             # Detect Word crash
             if 'execution error' in stderr.lower() or 'killed' in stderr.lower():
@@ -213,7 +213,7 @@ class WordConverter:
                 stderr or f'osascript exit code {proc_result.returncode}'
             )
 
-        # ── Parse the JSON result from the AppleScript ──────────
+        #  Parse the JSON result from the AppleScript 
         stdout = (proc_result.stdout or '').strip()
         if not stdout:
             raise ExportError(input_path, 'Bridge script produced no output')
@@ -226,7 +226,7 @@ class WordConverter:
                 f'Cannot parse bridge JSON output: {e}\nOutput: {stdout[:200]}'
             )
 
-        # ── Interpret the result ────────────────────────────────
+        #  Interpret the result 
         status = data.get('status', 'error')
 
         if status == 'error':
@@ -243,7 +243,7 @@ class WordConverter:
             else:
                 raise ExportError(input_path, error_msg)
 
-        # ── Verify output exists ────────────────────────────────
+        #  Verify output exists 
         if not output_path.exists() or output_path.stat().st_size == 0:
             raise ExportError(input_path, 'No PDF file produced (empty or missing)')
 
@@ -269,7 +269,7 @@ class WordConverter:
             'attempts': 1,
         }
 
-    # ── Retry wrapper ───────────────────────────────────────────
+    #  Retry wrapper 
 
     def convert_with_retry(self, input_path: Path, output_path: Path) -> Dict:
         """
@@ -330,35 +330,35 @@ class WordConverter:
             f'Failed after all retries. Last error: {last_error}'
         )
 
-    # ── Cleanup helpers ─────────────────────────────────────────
+    #  Cleanup helpers 
 
     @staticmethod
     def _cleanup_stale_word() -> None:
         """
         Attempt to close stray Word documents without saving.
 
-        We deliberately do NOT force-kill Word to avoid data loss —
+        We deliberately do NOT force-kill Word to avoid data loss 	6
         the user may have other documents open.
         """
         try:
             cleanup_script = '''
-try
-    tell application "Microsoft Word"
-        if not (exists document 1) then return
-        set docCount to count documents
-        if docCount > 0 then
-            close every document saving no
-        end if
-    end tell
-end try
-'''
+ try
+     tell application "Microsoft Word"
+         if not (exists document 1) then return
+         set docCount to count documents
+         if docCount > 0 then
+             close every document saving no
+         end if
+     end tell
+ end try
+ '''
             subprocess.run(
                 ['osascript', '-e', cleanup_script],
                 capture_output=True,
                 timeout=10,
             )
         except Exception:
-            _logger.warning(
+            _logger.debug(
                 "Word cleanup failed (non-fatal)", exc_info=True
             )
 
@@ -373,20 +373,20 @@ end try
         """
         try:
             quit_script = '''
-try
-    tell application "Microsoft Word"
-        close every document saving no
-        quit saving no
-    end tell
-end try
-'''
+ try
+     tell application "Microsoft Word"
+         close every document saving no
+         quit saving no
+     end tell
+ end try
+ '''
             subprocess.run(
                 ['osascript', '-e', quit_script],
                 capture_output=True,
                 timeout=10,
             )
         except Exception:
-            _logger.warning(
+            _logger.debug(
                 "Word graceful quit failed (non-fatal)", exc_info=True
             )
 
@@ -403,7 +403,7 @@ end try
                 timeout=5,
             )
         except Exception:
-            _logger.warning(
+            _logger.debug(
                 "Force-quit Word failed (non-fatal)", exc_info=True
             )
 
@@ -413,7 +413,7 @@ end try
         Restart Microsoft Word to clear accumulated state.
 
         Uses force-quit (pkill) because in a batch context there are
-        no user documents to protect — the converter only opens,
+        no user documents to protect 	6 the converter only opens,
         exports, and closes its own documents.
 
         After killing, waits for Word to fully relaunch and become
@@ -456,7 +456,7 @@ end try
             result = subprocess.run(check, capture_output=True, text=True, timeout=5)
             return result.stdout.strip() == 'true'
         except Exception:
-            _logger.warning(
+            _logger.debug(
                 "Word process check failed (non-fatal)", exc_info=True
             )
             return False
