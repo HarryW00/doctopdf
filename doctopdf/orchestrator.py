@@ -225,6 +225,25 @@ class Orchestrator:
                     WordConverter.restart_word()
                     self._conversions_since_restart = 0
 
+    def _make_error_record(
+        self,
+        input_path: Path,
+        output_path: Path,
+        start: float,
+        error: str,
+        attempts: int = 1,
+    ) -> LogRecord:
+        """Build an error LogRecord (behavior-preserving helper for _convert_single)."""
+        return LogRecord(
+            timestamp=time.strftime('%Y-%m-%dT%H:%M:%S'),
+            input_path=str(input_path),
+            output_path=str(output_path),
+            status='error',
+            duration=round(time.monotonic() - start, 2),
+            error=error,
+            attempts=attempts,
+        )
+
     def _convert_single(
         self,
         input_path: Path,
@@ -254,66 +273,30 @@ class Orchestrator:
 
         except WordPermissionError as e:
             # Permission issues are critical — surface immediately
-            return LogRecord(
-                timestamp=time.strftime('%Y-%m-%dT%H:%M:%S'),
-                input_path=str(input_path),
-                output_path=str(output_path),
-                status='error',
-                duration=round(time.monotonic() - start, 2),
-                error=str(e),
-            )
+            return self._make_error_record(input_path, output_path, start, str(e))
 
         except CorruptDocumentError as e:
-            return LogRecord(
-                timestamp=time.strftime('%Y-%m-%dT%H:%M:%S'),
-                input_path=str(input_path),
-                output_path=str(output_path),
-                status='error',
-                duration=round(time.monotonic() - start, 2),
-                error=str(e),
-            )
+            return self._make_error_record(input_path, output_path, start, str(e))
 
         except ConversionTimeoutError as e:
-            return LogRecord(
-                timestamp=time.strftime('%Y-%m-%dT%H:%M:%S'),
-                input_path=str(input_path),
-                output_path=str(output_path),
-                status='error',
-                duration=round(time.monotonic() - start, 2),
-                error=str(e),
+            return self._make_error_record(
+                input_path, output_path, start, str(e),
                 attempts=self.converter.retry_count + 1,
             )
 
         except ExportError as e:
-            return LogRecord(
-                timestamp=time.strftime('%Y-%m-%dT%H:%M:%S'),
-                input_path=str(input_path),
-                output_path=str(output_path),
-                status='error',
-                duration=round(time.monotonic() - start, 2),
-                error=str(e),
+            return self._make_error_record(
+                input_path, output_path, start, str(e),
                 attempts=self.converter.retry_count + 1,
             )
 
         except DocToPDFError as e:
-            return LogRecord(
-                timestamp=time.strftime('%Y-%m-%dT%H:%M:%S'),
-                input_path=str(input_path),
-                output_path=str(output_path),
-                status='error',
-                duration=round(time.monotonic() - start, 2),
-                error=str(e),
-            )
+            return self._make_error_record(input_path, output_path, start, str(e))
 
         except Exception as e:
             # Catch-all for unexpected errors
-            return LogRecord(
-                timestamp=time.strftime('%Y-%m-%dT%H:%M:%S'),
-                input_path=str(input_path),
-                output_path=str(output_path),
-                status='error',
-                duration=round(time.monotonic() - start, 2),
-                error=f'Unexpected error: {e}',
+            return self._make_error_record(
+                input_path, output_path, start, f'Unexpected error: {e}'
             )
 
     # ── Phase 4: Finalise ───────────────────────────────────────
