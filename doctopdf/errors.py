@@ -59,7 +59,7 @@ class CorruptDocumentError(DocumentOpenError):
         msg = f'Corrupt or unsupported document: {input_path.name}'
         if detail:
             msg += f' — {detail}'
-        super().__init__(msg)
+        DocToPDFError.__init__(self, msg, input_path)
 
 
 class ExportError(DocToPDFError):
