@@ -11,6 +11,12 @@
 
 </div>
 
+<div align="center">
+
+<!-- TODO: Add demo GIF — terminal recording showing batch conversion workflow (e.g. asciinema or QuickTime screen recording). Save to docs/images/demo.gif -->
+
+</div>
+
 **Convert .doc and .docx files to PDF using Microsoft Word as the rendering engine.**  
 Runs entirely offline with zero cloud dependencies.
 
@@ -278,6 +284,8 @@ The first time you run the tool (or the Automator Quick Action), macOS will show
 
 > **"Terminal" wants access to control "Microsoft Word".**
 > [Deny] [Allow]
+
+<!-- TODO: Add screenshot — macOS Automation Permission dialog ("Terminal" wants access to control "Microsoft Word"). Save to docs/images/automation-permission-dialog.png -->
 
 Click **Allow**. If you accidentally deny, fix it:
 
