@@ -1,12 +1,12 @@
 # DocToPDF — Offline macOS Batch Document Converter
 
 <div align="center">
-  
+
+![PyPI](https://img.shields.io/pypi/v/doctopdf?logo=pypi&logoColor=white&label=PyPI)
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9+-blue?logo=python&logoColor=white)
 ![Platform: macOS](https://img.shields.io/badge/Platform-macOS-lightgrey?logo=apple&logoColor=black)
 ![Automation: AppleScript](https://img.shields.io/badge/Automation-AppleScript%20%2F%20JXA-purple)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Version: 1.2.0](https://img.shields.io/badge/version-1.2.0-brightgreen)
 ![CI](https://github.com/HarryW00/doctopdf/actions/workflows/lint.yml/badge.svg)
 
 </div>
@@ -48,7 +48,7 @@ There are **three ways** to use this tool. Choose whichever is easiest for you:
 | Option | Method | Best for |
 |--------|--------|----------|
 | **A** | [Homebrew](https://brew.sh) — `brew install harryw00/doctopdf/doctopdf` | Everyone with Homebrew installed |
-| **B** | pip — `pip3 install .` (from source) | Users who prefer pip / don't have Homebrew |
+| **B** | pip — `pip3 install doctopdf` | Quickest one-liner, no Homebrew needed |
 | **C** | Run without install — `python3 -m doctopdf` | Quick test, no installation wanted |
 
 ---
@@ -64,6 +64,8 @@ brew install harryw00/doctopdf/doctopdf
 Homebrew automatically sets up all paths — no `cd`, no `pip`, no PATH fixes needed.
 It also keeps `doctopdf` up-to-date when you run `brew update && brew upgrade`.
 
+> **📦 Coming to homebrew-core** — `brew install doctopdf` will work once [PR #294100](https://github.com/Homebrew/homebrew-core/pull/294100) is merged.
+
 #### Verify it worked
 
 ```bash
@@ -72,29 +74,15 @@ convert-word-pdf --check
 
 ---
 
-### Option B: Install via pip
+### Option B: Install via pip (quickest)
 
-> **📦 PyPI package pending** — Once published, you'll be able to run `pip3 install doctopdf`.
-> For now, install from the source checkout.
-
-#### Step 1: Open Terminal
-
-- Press **Cmd + Space** → type **"Terminal"** → Enter
-
-#### Step 2: Get the source
+`doctopdf` is published on [PyPI](https://pypi.org/project/doctopdf/), so you can install it with a single command:
 
 ```bash
-git clone https://github.com/HarryW00/doctopdf.git
-cd doctopdf
+pip3 install doctopdf
 ```
 
-*(Or download the ZIP from GitHub and extract it.)*
-
-#### Step 3: Install
-
-```bash
-pip3 install .
-```
+That's it — no cloning, no `cd`, no `pip3 install .`. PyPI handles everything.
 
 > **⚠️ You may see a warning like this:**
 > ```
@@ -104,7 +92,7 @@ pip3 install .
 > This is normal on macOS — Python's install folder isn't on your `PATH` by default.
 > See the **Troubleshooting** section below to fix this in one minute.
 
-#### Step 4: Verify it worked
+#### Verify it worked
 
 ```bash
 convert-word-pdf --check
@@ -434,7 +422,7 @@ Use `--log-file results.json` or `--log-file results.csv` for post-hoc analysis.
 
 This is the most common issue on macOS. Here is what happened and how to fix it.
 
-**Why this happens:** When you run `pip3 install .`, Python installs the
+**Why this happens:** When you run `pip3 install doctopdf`, pip installs the
 `convert-word-pdf` command into a folder like:
 
 ```
