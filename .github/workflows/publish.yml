@@ -26,6 +26,12 @@ jobs:
       - name: Install build tool
         run: python -m pip install build --user
 
+      - name: Inject version from release tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Building version: $VERSION"
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+
       - name: Build binary wheel and source tarball
         run: python -m build
 
