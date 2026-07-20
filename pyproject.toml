@@ -22,8 +22,10 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Office Suites",
     "Topic :: Text Processing",
-    "Topic :: Text Processing :: Word General",
+    "Topic :: Text Editors :: Word Processors",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
 ]
 keywords = ["docx", "doc", "pdf", "converter", "microsoft-word", "macos"]
 requires-python = ">=3.9"
