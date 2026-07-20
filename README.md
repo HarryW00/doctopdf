@@ -43,58 +43,66 @@ Before you can use this tool, make sure you have everything listed below:
 
 ## Installation (step by step)
 
-There are **two ways** to use this tool. Choose whichever is easier for you:
+There are **three ways** to use this tool. Choose whichever is easiest for you:
 
-- **Option A** (recommended): Install it once, then run `convert-word-pdf` anywhere
-- **Option B** (no install): Run it directly from the project folder using `python3 -m doctopdf`
-
-Both options do the same thing. Option A is more convenient for repeated use.
+| Option | Method | Best for |
+|--------|--------|----------|
+| **A** | [Homebrew](https://brew.sh) — `brew install harryw00/doctopdf/doctopdf` | Everyone with Homebrew installed |
+| **B** | pip — `pip3 install .` (from source) | Users who prefer pip / don't have Homebrew |
+| **C** | Run without install — `python3 -m doctopdf` | Quick test, no installation wanted |
 
 ---
 
-### Option A: Install the tool (recommended)
+### Option A: Install via Homebrew (easiest)
 
-This installs a command called `convert-word-pdf` that you can use from any folder on your Mac.
+If you have [Homebrew](https://brew.sh) installed, this is the one-command way:
+
+```bash
+brew install harryw00/doctopdf/doctopdf
+```
+
+Homebrew automatically sets up all paths — no `cd`, no `pip`, no PATH fixes needed.
+It also keeps `doctopdf` up-to-date when you run `brew update && brew upgrade`.
+
+#### Verify it worked
+
+```bash
+convert-word-pdf --check
+```
+
+---
+
+### Option B: Install via pip
+
+> **📦 PyPI package pending** — Once published, you'll be able to run `pip3 install doctopdf`.
+> For now, install from the source checkout.
 
 #### Step 1: Open Terminal
 
-- Press **Cmd + Space** to open Spotlight Search
-- Type **"Terminal"** and press Enter
+- Press **Cmd + Space** → type **"Terminal"** → Enter
 
-> **💡 Tip:** You can also **Option + Right-Click** a folder in Finder and select **Services → Open in Terminal** (or **New Terminal at Folder**). This opens Terminal already `cd`'d to that location — no need to type a path.
-
-#### Step 2: Navigate to the project folder
-
-You need to be inside the `doctopdf` folder (the one containing this README file). Type this in Terminal:
+#### Step 2: Get the source
 
 ```bash
-cd ~/Documents/doctopdf
+git clone https://github.com/HarryW00/doctopdf.git
+cd doctopdf
 ```
 
-If you saved the project somewhere else, use that path instead. For example:
-- Desktop: `cd ~/Desktop/doctopdf`
-- Downloads: `cd ~/Downloads/doctopdf`
+*(Or download the ZIP from GitHub and extract it.)*
 
-#### Step 3: Install the package
-
-Run this command:
+#### Step 3: Install
 
 ```bash
 pip3 install .
 ```
 
-**What this does:** It tells Python to install the `doctopdf` package (the `.` means "the current folder"). The tool is now available as the `convert-word-pdf` command.
-
-> **⚠️ You might see a warning like this:**
+> **⚠️ You may see a warning like this:**
 > ```
 > WARNING: The script convert-word-pdf is installed in
 > '/Users/yourname/Library/Python/3.9/bin' which is not on PATH.
 > ```
-> This is normal on macOS — Python's install folder isn't on your
-> system's PATH by default. If you see this, the tool **is installed**
-> but the terminal can't find the `convert-word-pdf` command yet.
-> Skip to the **Troubleshooting** section below for how to fix this
-> in one minute. Or use **Option B** (run without installing) instead.
+> This is normal on macOS — Python's install folder isn't on your `PATH` by default.
+> See the **Troubleshooting** section below to fix this in one minute.
 
 #### Step 4: Verify it worked
 
@@ -103,64 +111,47 @@ convert-word-pdf --check
 ```
 
 You should see:
+
 ```
 ✓ Microsoft Word is installed (version: 16.72)
   The automation bridge is operational.
 ```
 
-If instead you see an error, skip down to the **Troubleshooting** section.
-
 ---
 
-### Option B: Run directly (no installation)
+### Option C: Run directly (no installation)
 
-If you don't want to install anything, you can run the tool directly from the project folder.
-
-#### Step 1: Open Terminal
-
-- Press **Cmd + Space** → type **"Terminal"** → Enter
-
-> **💡 Tip:** Option + Right-Click a folder in Finder and pick **Open in Terminal** to skip typing the `cd` path entirely.
-
-#### Step 2: Navigate to the project folder
+If you'd rather not install anything, run the tool straight from the project folder:
 
 ```bash
-cd ~/Documents/doctopdf
-```
-
-(Change the path if you saved the project elsewhere.)
-
-#### Step 3: Run the tool
-
-Instead of `convert-word-pdf`, you'll use:
-
-```bash
+cd path/to/doctopdf
 python3 -m doctopdf --check
 ```
 
-This tells Python to run the `doctopdf` package (`.m doctopdf`) from the current folder. Use this same pattern whenever you see `convert-word-pdf` in the examples below:
+Use `python3 -m doctopdf` wherever the docs say `convert-word-pdf`:
 
 | Instead of this | Use this |
-|---|---|
+|-----------------|----------|
 | `convert-word-pdf --check` | `python3 -m doctopdf --check` |
 | `convert-word-pdf -i ./docs -o ./pdfs` | `python3 -m doctopdf -i ./docs -o ./pdfs` |
 | `convert-word-pdf --version` | `python3 -m doctopdf --version` |
 
 ---
 
-### Step for both options: Verify Word is detected
+### After installing (all options)
 
-After installing (or if running directly), run the check command to make sure everything is set up correctly:
+Run the check to make sure Word is detected:
 
 ```bash
-# If you did Option A (installed)
+# Installed (Option A or B)
 convert-word-pdf --check
 
-# If you did Option B (no install, run from project folder)
+# Direct run (Option C)
 python3 -m doctopdf --check
 ```
 
 **Expected output:**
+
 ```
 ✓ Microsoft Word is installed (version: 16.72)
   The automation bridge is operational.
@@ -512,7 +503,7 @@ installed, your terminal doesn't know where to find it.
 
    You should see `convert-word-pdf 1.0.0` instead of "command not found."
 
-#### Fix B: Skip PATH entirely — use Option B instead
+#### Fix B: Skip PATH entirely — use Option C instead
 
 If you don't want to edit configuration files, don't install the tool at
 all. Run it directly from the project folder instead:
@@ -522,7 +513,7 @@ cd ~/Documents/doctopdf
 python3 -m doctopdf --check
 ```
 
-See **Option B** in the Installation section above for full instructions.
+See **Option C** in the Installation section above for full instructions.
 The tool works identically either way — you just type a slightly longer
 command.
 
