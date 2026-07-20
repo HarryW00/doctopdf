@@ -1,0 +1,45 @@
+name: Update Homebrew Tap
+
+# This workflow triggers whenever you publish a new GitHub Release
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-tap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Calculate new SHA256
+        id: release_data
+        run: |
+          VERSION=${{ github.event.release.tag_name }}
+          URL="https://github.com/HarryW00/doctopdf/archive/refs/tags/${VERSION}.tar.gz"
+          # Download the new release tarball and calculate its hash
+          SHA256=$(curl -sL $URL | sha256sum | awk '{print $1}')
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+
+      - name: Checkout Tap Repository
+        uses: actions/checkout@v4
+        with:
+          repository: HarryW00/homebrew-doctopdf
+          # This uses the Fine-grained PAT you just saved in your secrets
+          token: ${{ secrets.TAP_GITHUB_TOKEN }} 
+          path: homebrew-doctopdf
+
+      - name: Update Formula and Push
+        run: |
+          cd homebrew-doctopdf
+          
+          # Find the old url and sha256 lines and replace them with the new ones
+          sed -i -e "s|url \".*\"|url \"${{ steps.release_data.outputs.url }}\"|" Formula/doctopdf.rb
+          sed -i -e "s|sha256 \".*\"|sha256 \"${{ steps.release_data.outputs.sha256 }}\"|" Formula/doctopdf.rb
+
+          # Configure the git bot and push the changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/doctopdf.rb
+          git commit -m "Bump doctopdf formula to ${{ steps.release_data.outputs.version }}"
+          git push
