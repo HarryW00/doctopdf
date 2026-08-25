@@ -61,10 +61,7 @@ If you have [Homebrew](https://brew.sh) installed, this is the one-command way:
 brew install harryw00/doctopdf/doctopdf
 ```
 
-Homebrew automatically sets up all paths — no `cd`, no `pip`, no PATH fixes needed.
-It also keeps `doctopdf` up-to-date when you run `brew update && brew upgrade`.
-
-> **📦 Coming to homebrew-core** — `brew install doctopdf` will work once [PR #294100](https://github.com/Homebrew/homebrew-core/pull/294100) is merged.
+Homebrew automatically keeps `doctopdf` up-to-date when you run `brew update && brew upgrade`.
 
 #### Verify it worked
 
@@ -81,8 +78,6 @@ convert-word-pdf --check
 ```bash
 pip3 install doctopdf
 ```
-
-That's it — no cloning, no `cd`, no `pip3 install .`. PyPI handles everything.
 
 > **⚠️ You may see a warning like this:**
 > ```
@@ -146,7 +141,7 @@ python3 -m doctopdf --check
 ```
 
 **If you see "Word is NOT installed":**
-1. Make sure Microsoft Word is actually installed (open it from Applications)
+1. Make sure Microsoft Word is **actually installed** (open it from Applications)
 2. If Word opens but the check still fails, close Word completely (Word menu → Quit Microsoft Word) and try again
 3. If you just installed Word, restart your Mac and try again
 
