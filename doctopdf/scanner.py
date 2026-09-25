@@ -6,17 +6,18 @@ supported document formats, and deterministically mapping each
 input file to its intended output PDF path.
 """
 
-from pathlib import Path
-from typing import List
+from __future__ import annotations
 
-from .config import SUPPORTED_EXTENSIONS, MIN_FILE_SIZE_BYTES
+from pathlib import Path
+
+from .config import MIN_FILE_SIZE_BYTES, SUPPORTED_EXTENSIONS
 
 
 def find_documents(
     input_dir: Path,
     recursive: bool = True,
     min_size_bytes: int = MIN_FILE_SIZE_BYTES,
-) -> List[Path]:
+) -> list[Path]:
     """
     Recursively discover supported document files under input_dir.
 
@@ -37,7 +38,7 @@ def find_documents(
         return []
 
     pattern = '**/*' if recursive else '*'
-    matches: List[Path] = []
+    matches: list[Path] = []
 
     for path in input_dir.glob(pattern):
         if not path.is_file():
@@ -127,7 +128,7 @@ def resolve_collision(output_path: Path, max_attempts: int = 1000) -> Path:
     return parent / f'{stem}_{int(time.time())}.pdf'
 
 
-def resolve_input_paths(input_paths: List[Path], recursive: bool = True) -> List[Path]:
+def resolve_input_paths(input_paths: list[Path], recursive: bool = True) -> list[Path]:
     """
     Normalise a mix of file and directory arguments into a flat list
     of document files.
@@ -142,7 +143,7 @@ def resolve_input_paths(input_paths: List[Path], recursive: bool = True) -> List
     Returns:
         Sorted list of document paths, deduplicated.
     """
-    documents: List[Path] = []
+    documents: list[Path] = []
 
     for path in input_paths:
         path = Path(path).resolve()

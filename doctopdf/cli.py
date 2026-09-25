@@ -13,16 +13,17 @@ Usage:
     convert-word-pdf --version
 """
 
+from __future__ import annotations
+
 import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import List, Optional
 
 from . import __version__
-from .orchestrator import Orchestrator
 from .converter import WordConverter
-from .errors import WordNotInstalledError, WordPermissionError, FileAccessError
+from .errors import FileAccessError, WordNotInstalledError, WordPermissionError
+from .orchestrator import Orchestrator
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -179,7 +180,7 @@ def cmd_check() -> int:
         return 1
 
 
-def cmd_validate_args(args: argparse.Namespace) -> Optional[str]:
+def cmd_validate_args(args: argparse.Namespace) -> str | None:
     """Validate mutually-dependent arguments. Returns error string or None."""
     if not args.input and not args.check:
         return '--input is required (use --check to probe for Word)'
@@ -187,10 +188,9 @@ def cmd_validate_args(args: argparse.Namespace) -> Optional[str]:
     if args.input and not args.input.is_dir():
         return f'Input path is not a directory or does not exist: {args.input}'
 
-    if not args.output and not args.check and not args.dry_run:
-        # In dry-run mode, output is not strictly needed
-        if args.input:
-            return '--output is required for conversion (omit with --dry-run)'
+    # In dry-run mode, output is not strictly needed
+    if not args.output and not args.check and not args.dry_run and args.input:
+        return '--output is required for conversion (omit with --dry-run)'
 
     if args.log_file:
         parent = Path(args.log_file).parent
@@ -243,7 +243,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
     return 0 if errors == 0 else 1
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """
     CLI entry point.
 
@@ -284,7 +284,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     except FileAccessError as e:
         print(f'ERROR: {e}')
         return 1
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - top-level fallback for unexpected errors
         print(f'ERROR: Unexpected error: {e}', file=sys.stderr)
         import traceback
         traceback.print_exc(file=sys.stderr)
