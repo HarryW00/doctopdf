@@ -16,25 +16,25 @@ Typical usage:
     )
 """
 
+from __future__ import annotations
+
 import json
 import logging
 import os
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, Tuple
 
-from .config import APPLESCRIPT_EXPORT_SCRIPT, APPLESCRIPT_CHECK_WORD
+from .config import APPLESCRIPT_CHECK_WORD, APPLESCRIPT_EXPORT_SCRIPT
 from .errors import (
-    WordPermissionError,
-    DocumentOpenError,
-    CorruptDocumentError,
-    ExportError,
     ConversionTimeoutError,
-    WordCrashError,
+    CorruptDocumentError,
+    DocumentOpenError,
+    ExportError,
     FileAccessError,
+    WordCrashError,
+    WordPermissionError,
 )
-
 
 _logger = logging.getLogger(__name__)
 _log = logging.getLogger(__name__)
@@ -99,7 +99,7 @@ class WordConverter:
     #  Installation check 
 
     @staticmethod
-    def check_word_installed() -> Tuple[bool, str]:
+    def check_word_installed() -> tuple[bool, str]:
         """
         Probe whether Microsoft Word is installed and scriptable.
 
@@ -113,6 +113,7 @@ class WordConverter:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             if result.returncode != 0:
                 return False, result.stderr.strip() or 'osascript failed'
@@ -129,12 +130,12 @@ class WordConverter:
             return False, 'Cannot parse Word probe result'
         except FileNotFoundError:
             return False, 'osascript not found (not macOS?)'
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             return False, str(e)
 
     #  Single conversion 
 
-    def convert(self, input_path: Path, output_path: Path) -> Dict:
+    def convert(self, input_path: Path, output_path: Path) -> dict:
         """
         Convert a single document to PDF via the AppleScript bridge.
 
@@ -187,6 +188,7 @@ class WordConverter:
                 capture_output=True,
                 text=True,
                 timeout=self.timeout + 15,  # 15s grace for osascript overhead
+                check=False,
             )
         except subprocess.TimeoutExpired:
             self._cleanup_stale_word()
@@ -258,7 +260,7 @@ class WordConverter:
                 )
         except ExportError:
             raise
-        except Exception as e:
+        except OSError as e:
             raise ExportError(input_path, f'Cannot verify output PDF: {e}')
 
         return {
@@ -271,7 +273,7 @@ class WordConverter:
 
     #  Retry wrapper 
 
-    def convert_with_retry(self, input_path: Path, output_path: Path) -> Dict:
+    def convert_with_retry(self, input_path: Path, output_path: Path) -> dict:
         """
         Convert a document with automatic retry on recoverable failures.
 
@@ -356,8 +358,9 @@ class WordConverter:
                 ['osascript', '-e', cleanup_script],
                 capture_output=True,
                 timeout=10,
+                check=False,
             )
-        except Exception:
+        except (subprocess.SubprocessError, OSError):
             _logger.debug(
                 "Word cleanup failed (non-fatal)", exc_info=True
             )
@@ -384,8 +387,9 @@ class WordConverter:
                 ['osascript', '-e', quit_script],
                 capture_output=True,
                 timeout=10,
+                check=False,
             )
-        except Exception:
+        except (subprocess.SubprocessError, OSError):
             _logger.debug(
                 "Word graceful quit failed (non-fatal)", exc_info=True
             )
@@ -401,8 +405,9 @@ class WordConverter:
                 ['pkill', '-x', 'Microsoft Word'],
                 capture_output=True,
                 timeout=5,
+                check=False,
             )
-        except Exception:
+        except (subprocess.SubprocessError, OSError):
             _logger.debug(
                 "Force-quit Word failed (non-fatal)", exc_info=True
             )
@@ -450,12 +455,16 @@ class WordConverter:
         try:
             check = [
                 'osascript', '-e',
-                'tell application "System Events" to '
-                'exists process "Microsoft Word"'
+                (
+                    'tell application "System Events" to '
+                    'exists process "Microsoft Word"'
+                )
             ]
-            result = subprocess.run(check, capture_output=True, text=True, timeout=5)
+            result = subprocess.run(
+                check, capture_output=True, text=True, timeout=5, check=False
+            )
             return result.stdout.strip() == 'true'
-        except Exception:
+        except (subprocess.SubprocessError, OSError):
             _logger.debug(
                 "Word process check failed (non-fatal)", exc_info=True
             )

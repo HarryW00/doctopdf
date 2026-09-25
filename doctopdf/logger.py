@@ -8,13 +8,15 @@ Provides the ConversionLogger class which:
 - Exports logs in CSV and JSON formats for post-hoc analysis.
 """
 
+from __future__ import annotations
+
 import csv
 import json
 import sys
 import time
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import List, Optional, TextIO
+from typing import ClassVar, TextIO
 
 
 @dataclass
@@ -26,7 +28,7 @@ class LogRecord:
     output_path: str = ''
     status: str = 'pending'       # pending | success | error | skipped
     duration: float = 0.0
-    error: Optional[str] = None
+    error: str | None = None
     attempts: int = 1
 
 
@@ -34,9 +36,9 @@ class ConversionLogger:
     """Records and displays conversion results."""
 
     def __init__(self, out_stream: TextIO = sys.stdout):
-        self.records: List[LogRecord] = []
+        self.records: list[LogRecord] = []
         self._out = out_stream
-        self._errors: List[LogRecord] = []
+        self._errors: list[LogRecord] = []
 
     def log_result(self, record: LogRecord) -> None:
         """Record a result and print a status line."""
@@ -52,7 +54,7 @@ class ConversionLogger:
 
     # ── Status line rendering ───────────────────────────────────
 
-    STATUS_ICONS = {
+    STATUS_ICONS: ClassVar[dict[str, str]] = {
         'success': '✓',   # ✓
         'error':   '✗',   # ✗
         'skipped': '→',   # →
@@ -155,7 +157,7 @@ class ConversionLogger:
         input_path: str,
         output_path: str = '',
         duration: float = 0.0,
-        error: Optional[str] = None,
+        error: str | None = None,
         attempts: int = 1,
     ) -> LogRecord:
         """Create a LogRecord with an auto-generated timestamp."""

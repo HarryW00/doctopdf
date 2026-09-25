@@ -8,22 +8,24 @@ Manages the end-to-end conversion pipeline:
 4. Logging and results collection
 """
 
+from __future__ import annotations
+
 import time
 from pathlib import Path
-from typing import Callable, List, Optional
+from typing import Callable
 
-from .scanner import find_documents, map_output_path, resolve_collision
 from .converter import WordConverter
-from .logger import ConversionLogger, LogRecord
 from .errors import (
+    ConversionTimeoutError,
+    CorruptDocumentError,
     DocToPDFError,
+    ExportError,
+    FileAccessError,
     WordNotInstalledError,
     WordPermissionError,
-    CorruptDocumentError,
-    ExportError,
-    ConversionTimeoutError,
-    FileAccessError,
 )
+from .logger import ConversionLogger, LogRecord
+from .scanner import find_documents, map_output_path, resolve_collision
 
 
 class Orchestrator:
@@ -52,8 +54,8 @@ class Orchestrator:
         retry: int = 2,
         restart_every: int = 0,
         dry_run: bool = False,
-        log_file: Optional[Path] = None,
-        progress_callback: Optional[Callable] = None,
+        log_file: Path | None = None,
+        progress_callback: Callable | None = None,
     ):
         """
         Args:
@@ -89,12 +91,12 @@ class Orchestrator:
         self.progress_callback = progress_callback
 
         # State
-        self._results: List[LogRecord] = []
+        self._results: list[LogRecord] = []
         self._start_time: float = 0.0
 
     # ── Main entry point ────────────────────────────────────────
 
-    def run(self) -> List[LogRecord]:
+    def run(self) -> list[LogRecord]:
         """
         Execute the full batch conversion workflow.
 
@@ -164,7 +166,7 @@ class Orchestrator:
 
     # ── Phase 2: Files (dry run) ────────────────────────────────
 
-    def _dry_run_files(self, files: List[Path]) -> None:
+    def _dry_run_files(self, files: list[Path]) -> None:
         """Report what would be converted without actually doing it."""
         self.logger.log_message('Files to convert:')
 
@@ -183,7 +185,7 @@ class Orchestrator:
 
     # ── Phase 3: Conversion loop ────────────────────────────────
 
-    def _convert_files(self, files: List[Path]) -> None:
+    def _convert_files(self, files: list[Path]) -> None:
         """Convert each file sequentially with logging."""
         total = len(files)
 
@@ -293,7 +295,7 @@ class Orchestrator:
         except DocToPDFError as e:
             return self._make_error_record(input_path, output_path, start, str(e))
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - preserve each file as an error record
             # Catch-all for unexpected errors
             return self._make_error_record(
                 input_path, output_path, start, f'Unexpected error: {e}'
@@ -321,7 +323,7 @@ class Orchestrator:
     # ── Properties ──────────────────────────────────────────────
 
     @property
-    def results(self) -> List[LogRecord]:
+    def results(self) -> list[LogRecord]:
         """All conversion results from the last run."""
         return list(self._results)
 

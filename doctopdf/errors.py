@@ -5,14 +5,15 @@ Each exception carries the input_path it originated from, enabling
 the orchestrator to log which file failed and why.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Optional
 
 
 class DocToPDFError(Exception):
     """Base exception for all conversion errors."""
 
-    def __init__(self, message: str, input_path: Optional[Path] = None):
+    def __init__(self, message: str, input_path: Path | None = None):
         self.input_path = input_path
         super().__init__(message)
 
@@ -20,7 +21,7 @@ class DocToPDFError(Exception):
 class WordNotInstalledError(DocToPDFError):
     """Microsoft Word is not installed or not scriptable via AppleScript/JXA."""
 
-    def __init__(self, message: Optional[str] = None):
+    def __init__(self, message: str | None = None):
         super().__init__(
             message or (
                 'Microsoft Word is not installed or not scriptable.\n'
